@@ -26,8 +26,9 @@ const listContainer = document.querySelector(".list");
 
 const alertMsgClasses = alertMsg.classList;
 
-let items = [];
-let itemz = [];
+let items = []; //
+let itemsData = [];
+let itemIDGen = 0;
 let createNewList = true;
 let allowDuplicate = false;
 
@@ -75,55 +76,46 @@ const btnMagic = function () {
   });
 };
 
-const moveItemUp = function (element) {
-  const li = element.parentElement;
-  let arr = [];
-  const listElements = document.querySelectorAll("li");
+const moveItemUp = function (li) {
+  const i = itemsData.findIndex(item => item.itemID === li.id)
 
-  listElements.forEach((li) => {
-    arr.push(li.innerHTML);
-  });
-
-  const i = arr.indexOf(li.innerHTML);
   if (i !== 0) {
-    const [x, y] = [arr[i - 1], arr[i]];
-    listElements[i - 1].innerHTML = y;
-    listElements[i].innerHTML = x;
+    const [movingDown, movingUp] = [itemsData[i - 1], itemsData[i]];
+    itemsData[i] = movingDown;
+    itemsData[i - 1] = movingUp;
   }
-  btnMagic();
+
+  console.log("ID of li to move up:", li.id, "\nIndex of li to move up:", i, "\nITEMS:", itemsData);  //
+  // btnMagic();  // essa merda tá dando bug... ver qual é desse bagui, se vale a pena deixá-lo desativado mesmo (o que soluciona os bugs) ou não. fora isso tudo sob o controle com essa função 👍
 };
 
-const moveItemDown = function (element) {
-  const li = element.parentElement;
-  let arr = [];
-  const listElements = document.querySelectorAll("li");
+const moveItemDown = function (li) {
+  const i = itemsData.findIndex(item => item.itemID === li.id)
 
-  listElements.forEach((li) => {
-    arr.push(li.innerHTML);
-  });
-
-  const i = arr.indexOf(li.innerHTML);
-  if (i !== arr.length - 1) {
-    const [x, y] = [arr[i], arr[i + 1]];
-    listElements[i].innerHTML = y;
-    listElements[i + 1].innerHTML = x;
+  if (i !== itemsData.length - 1) {
+    const [movingDown, movingUp] = [itemsData[i], itemsData[i + 1]]
+    itemsData[i] = movingUp;
+    itemsData[i + 1] = movingDown;
   }
-  btnMagic();
+  
+  console.log("ID of li to move down:", li.id, "\nIndex of li to move down:", i, "\nITEMS:", itemsData);  //
+  // btnMagic();  // essa merda tá dando bug... ver qual é desse bagui, se vale a pena deixá-lo desativado mesmo (o que soluciona os bugs) ou não. fora isso tudo sob o controle com essa função 👍
 };
 
-const RemoveItem = function (element) {
-  const li = element.parentElement;
-  const i = items.indexOf(li.innerText);
+const RemoveItem = function (li) {
+  const i = itemsData.findIndex(item => item.itemID === li.id);
   const l = document.querySelector("#shoplist");
-  // newList.remove();
+
+  itemsData.splice(i, 1);
   li.remove();
   if (l.children.length === 0) {
     l.remove();
+    itemIDGen = 0;  // resets item ID generator
     closeList();
   }
-  items.splice(i, 1);
-  console.log("ITEMS:", items); //
-  btnMagic();
+
+  console.log("ID of deleted li:", li.id, "\nIndex of deleted li:", i, "\nITEMS:", itemsData, "\nl.children.length:", l.children.length); //
+  // btnMagic(); // essa merda tá dando bug... ver qual é desse bagui, se vale a pena deixá-lo desativado mesmo (o que soluciona os bugs) ou não. fora isso tudo sob o controle com essa função 👍
 };
 
 const closeModal = function () {
@@ -138,118 +130,126 @@ const closeList = function () {
     listContainer.classList.add("hidden");
 };
 
+const reformatList = function (type) {
+  try {
+    if (type !== "ul" && type !== "ol") throw new Error("Argument 'type' must be set to either 'ol' or 'ul'.");
+
+    const existingList = document.querySelector("#shoplist");
+    const reverseType = type === "ul" ? "ol" : "ul";
+  
+    if (existingList && existingList.tagName.toLowerCase() === reverseType) {
+      const newListType = document.createElement(type);
+      newListType.id = existingList.id;
+      itemsData.forEach(item => newListType.append(item.HTMLElements.li));
+      listContainer.replaceChildren(newListType);
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
 const addItem = function () {
   /* const */ let p = productField.value;
 
-  if (items.includes(p) && !allowDuplicate) {
-    modal.classList.remove("hidden"); // "Já existe um produto com esse nome na lista. Inserir mesmo assim?"
-    overlay.classList.remove("hidden");
+  if (p === "") {
+    alertMsg.innerHTML =
+      "<p>Por favor, insira seu produto no espaço apropriado acima.</p><br>";
   } else {
-    const listFormat = btnUl.classList.contains("format-btn-selected")
-      ? "ul"
-      : "ol";
-    /* document.querySelector("#unordered-list").checked === true ? "ul" : "ol"; */
+    if (alertMsg.innerHTML) alertMsg.innerHTML = "";
+    if (listContainer.classList.contains("hidden"))
+    listContainer.classList.remove("hidden");
 
-    // create elements
-    const newList = document.createElement(listFormat); // = ul | ol
-    const existingList = document.querySelector("#shoplist");
-    const li = document.createElement("li");
-    const btnMoveItemUp = document.createElement("button");
-    const btnMoveItemDown = document.createElement("button");
-    const btnRemoveItem = document.createElement("button");
-    const liBtns = [btnMoveItemUp, btnMoveItemDown, btnRemoveItem];
-
-    const amount = Number(amountField.value) <= 0 ? "1" : amountField.value;
-    const product = amount === "" || amount === "1" ? p : `${p} (x${amount})`;
-
-    // button setup
-    btnMoveItemUp.innerHTML = "&#8679";
-    btnMoveItemUp.title = "Mover item para cima";
-    btnMoveItemUp.classList.add("li-btn", "move-item", "visibility-hidden");
-
-    btnMoveItemDown.innerHTML = "&#8681";
-    btnMoveItemDown.title = "Mover item para baixo";
-    btnMoveItemDown.classList.add("li-btn", "move-item", "visibility-hidden");
-
-    btnRemoveItem.innerHTML = "&times;";
-    btnRemoveItem.title = "Remover item";
-    btnRemoveItem.classList.add("li-btn", "remove-item", "visibility-hidden");
-
-    //
-    if (p === "") {
-      // alertMsgClasses.remove("hidden"); // show alert if product field is empty
-      alertMsg.innerHTML =
-        "<p>Por favor, insira seu produto no espaço apropriado acima.</p><br>";
+    if (itemsData.some(item => item.itemName === p) && !allowDuplicate) {
+      modal.classList.remove("hidden"); // "Já existe um produto com esse nome na lista. Inserir mesmo assim?"
+      overlay.classList.remove("hidden");
     } else {
-      alertMsg.innerHTML = "";
-      while (items.includes(p)) {
-        p += "_";
-      }
-      items.push(p); // items++
-      if (listContainer.classList.contains("hidden"))
-        listContainer.classList.remove("hidden");
-
-      // build up list
-      li.append(product, btnMoveItemUp, btnMoveItemDown, btnRemoveItem); // append elements to list item
-      if (existingList === null) {
-        newList.id = "shoplist";
-        newList.append(li);
-        listContainer.append(newList); // append newly created list to container
-        console.log(`existingList: ${existingList}
-        existingList_: ${document.querySelector("#shoplist")}`); //
-      } else {
-        existingList.append(li);
-      }
-    }
-
-    toggleVisibilityInElementsOnHover(li, liBtns);
-
-    btnMoveItemDown.addEventListener("click", function() {
-      moveItemDown(this);
-      // btnMagic();
-    }); //
-
-    btnMoveItemUp.addEventListener("click", function() {
-      moveItemUp(this);
-      // btnMagic();
-    }); //
-
-    btnRemoveItem.addEventListener("click", function() {
-      /*       const i = items.indexOf(p);
-      const l = document.querySelector("#shoplist");
-      // newList.remove();
-      li.remove();
-      if (l.children.length === 0) {
-        l.remove();
-        closeList();
-      }
-      items.splice(i, 1);
-      console.log("ITEMS:", items); //
-      btnMagic(); */
-      RemoveItem(this);
-    });
-
-    // if (p !== "") items.push(p);
-
-    // itemz.push([li, liBtns]);
-    itemz.push({
-      itemName: p,
-      itemAmount: amount,
-      HTMLElements: {
-        li: li,
-        buttons: liBtns
-      }
-    })
-
-    // show info
-    console.log(
-      `=== INFO ===
+      const listFormat = btnUl.classList.contains("format-btn-selected")
+        ? "ul"
+        : "ol";
+      /* document.querySelector("#unordered-list").checked === true ? "ul" : "ol"; */
   
-    allowDuplicate: ${allowDuplicate}
-    existingList: ${existingList}
-    ITEMS:`,
-      itemz
-    );
+      // create elements
+      const newList = document.createElement(listFormat); // = ul | ol
+      const existingList = document.querySelector("#shoplist");
+      const li = document.createElement("li");
+      const btnMoveItemUp = document.createElement("button");
+      const btnMoveItemDown = document.createElement("button");
+      const btnRemoveItem = document.createElement("button");
+      const liBtns = [btnMoveItemUp, btnMoveItemDown, btnRemoveItem];
+  
+      const amount = Number(amountField.value) <= 0 ? "1" : amountField.value;
+      const product = amount === "" || amount === "1" ? p : `${p} (x${amount})`;
+      
+      li.id = 'li-' + itemIDGen;
+  
+      itemsData.push({
+        itemID: li.id,
+        itemName: p,
+        itemAmount: amount,
+        HTMLElements: {
+          li: li,
+          buttons: liBtns
+        }
+      })
+  
+      // button setup
+      btnMoveItemUp.innerHTML = "&#8679";
+      btnMoveItemUp.title = "Mover item para cima";
+      btnMoveItemUp.classList.add("li-btn", "move-item", "visibility-hidden");
+      
+      btnMoveItemDown.innerHTML = "&#8681";
+      btnMoveItemDown.title = "Mover item para baixo";
+      btnMoveItemDown.classList.add("li-btn", "move-item", "visibility-hidden");
+      
+      btnRemoveItem.innerHTML = "&times;";
+      btnRemoveItem.title = "Remover item";
+      btnRemoveItem.classList.add("li-btn", "remove-item", "visibility-hidden");
+      
+      //
+      if (p === "") {
+        // alertMsgClasses.remove("hidden"); // show alert if product field is empty
+        alertMsg.innerHTML =
+          "<p>Por favor, insira seu produto no espaço apropriado acima.</p><br>";
+      } else {
+        alertMsg.innerHTML = "";
+        // while (items.includes(p)) {
+        //   p += "_";
+        // }
+        // items.push(p); // items++
+        if (listContainer.classList.contains("hidden"))
+          listContainer.classList.remove("hidden");
+  
+        // build up list
+        li.append(product, btnMoveItemUp, btnMoveItemDown, btnRemoveItem); // append elements to list item
+        if (existingList === null) {
+          newList.id = "shoplist";
+          newList.append(li);
+          listContainer.append(newList); // append newly created list to container
+          console.log(`existingList: ${existingList}
+          existingList_: ${document.querySelector("#shoplist")}`); //
+        } else {
+          existingList.append(li);
+        }
+      }
+  
+      toggleVisibilityInElementsOnHover(li, liBtns);
+  
+      btnMoveItemDown.addEventListener("click", () => moveItemDown(li));
+      btnMoveItemUp.addEventListener("click", () => moveItemUp(li));
+      btnRemoveItem.addEventListener("click", () => RemoveItem(li));
+  
+      itemIDGen++;  // increase id generator
+  
+      // show info
+      console.log(
+        `=== INFO ===
+    
+      allowDuplicate: ${allowDuplicate}
+      existingList: ${existingList}
+      ITEMS:`,
+        itemsData
+      );
+    }
   }
 };
 
@@ -261,45 +261,43 @@ btnClearList.addEventListener("click", () => {
     alertMsg.innerHTML = "<p>Não há itens para remover!</p><br>";
   } else {
     listContainer.innerHTML = "";
-    items = []; //
-    itemz = [];
+    itemsData = [];
+    itemIDGen = 0;  // resets the id generator
     closeList();
     showInfo(); //
   }
 });
 
 btnUl.addEventListener("click", () => {
-  const existingList = document.querySelector("#shoplist");
-
-  /*   console.log("tag name: ", existingList.tagName); */
-  if (existingList !== null && existingList.tagName.toLowerCase() === "ol") {
-    const ul = document.createElement("ul"); // CONVERTER P FUNÇÃO
-    ul.id = existingList.id;
-    ul.innerHTML = existingList.innerHTML;
-    existingList.parentElement.replaceChildren(ul);
-    btnMagic();
-  }
+  reformatList("ul");
   if (!btnUl.classList.contains("format-btn-selected")) {
     btnUl.classList.add("format-btn-selected");
     btnOl.classList.remove("format-btn-selected");
   }
+  showInfo(); //
 });
 
 btnOl.addEventListener("click", () => {
-  const existingList = document.querySelector("#shoplist");
+  // const existingList = document.querySelector("#shoplist");
 
-  if (existingList !== null && existingList.tagName.toLowerCase() === "ul") {
-    const ol = document.createElement("ol"); // CONVERTER P FUNÇÃO
-    ol.id = existingList.id;
-    ol.innerHTML = existingList.innerHTML;
-    existingList.parentElement.replaceChildren(ol);
-    btnMagic();
-  }
+  // if (existingList && existingList.tagName.toLowerCase() === "ul") {
+  //   const ol = document.createElement("ol"); // CONVERTER P FUNÇÃO
+  //   ol.id = existingList.id;
+  //   itemsData.forEach(item => ol.append(item.HTMLElements.li));
+  //   listContainer.replaceChildren(ol);
+    
+  //   ol.id = existingList.id;
+  //   ol.innerHTML = existingList.innerHTML;
+  //   existingList.parentElement.replaceChildren(ol);
+  //   btnMagic();
+  // }
+  reformatList("ol");
   if (!btnOl.classList.contains("format-btn-selected")) {
     btnOl.classList.add("format-btn-selected");
     btnUl.classList.remove("format-btn-selected");
   }
-});
+  showInfo(); //
+}); // WIP
 
 btnYes.addEventListener("click", () => {
   closeModal();
@@ -315,9 +313,11 @@ const showInfo = function () {
     `=== INFO ===
 
   ITEMS:`,
-    itemz
+    itemsData
   );
 }
+
+// console.log(getComputedStyle(document.querySelector(".popout")).animationDuration);
 
 /*
 BUGS/ERRORS:
