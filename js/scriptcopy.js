@@ -52,32 +52,9 @@ const toggleVisibilityInElementsOnHover = function (targetElem, arr) {
   });
 };
 
-const btnMagic = function () {
-  const listElements = document.querySelectorAll("li");
-  let liBtns = [];
-  listElements.forEach((li) => {
-    liBtns.push(li.querySelectorAll(".li-btn"));
-  });
-  // console.log("liBtns: ", liBtns, "\nLiBtns[0]:", liBtns[0]);
-  listElements.forEach((li, i) => {
-    toggleVisibilityInElementsOnHover(li, liBtns[i]);
-    liBtns[i].forEach((btn, i) => {
-      switch (i) {
-        case 0:
-          btn.addEventListener("click", () => moveItemUp(btn));
-          break;
-        case 1:
-          btn.addEventListener("click", () => moveItemDown(btn));
-          break;
-        case 2:
-          btn.addEventListener("click", () => RemoveItem(btn));
-      }
-    });
-  });
-};
-
 const moveItemUp = function (li) {
   const i = itemsData.findIndex(item => item.itemID === li.id)
+  const existingList = document.querySelector("#shoplist");
 
   if (i !== 0) {
     const [movingDown, movingUp] = [itemsData[i - 1], itemsData[i]];
@@ -85,21 +62,26 @@ const moveItemUp = function (li) {
     itemsData[i - 1] = movingUp;
   }
 
+  existingList.innerHTML = "";
+  itemsData.forEach(item => existingList.append(item.HTMLElements.li)); // converter p funcao
+
   console.log("ID of li to move up:", li.id, "\nIndex of li to move up:", i, "\nITEMS:", itemsData);  //
-  // btnMagic();  // essa merda tá dando bug... ver qual é desse bagui, se vale a pena deixá-lo desativado mesmo (o que soluciona os bugs) ou não. fora isso tudo sob o controle com essa função 👍
 };
 
 const moveItemDown = function (li) {
   const i = itemsData.findIndex(item => item.itemID === li.id)
+  const existingList = document.querySelector("#shoplist");
 
   if (i !== itemsData.length - 1) {
     const [movingDown, movingUp] = [itemsData[i], itemsData[i + 1]]
     itemsData[i] = movingUp;
     itemsData[i + 1] = movingDown;
   }
+
+  existingList.innerHTML = "";
+  itemsData.forEach(item => existingList.append(item.HTMLElements.li)); // converter p funcao
   
   console.log("ID of li to move down:", li.id, "\nIndex of li to move down:", i, "\nITEMS:", itemsData);  //
-  // btnMagic();  // essa merda tá dando bug... ver qual é desse bagui, se vale a pena deixá-lo desativado mesmo (o que soluciona os bugs) ou não. fora isso tudo sob o controle com essa função 👍
 };
 
 const RemoveItem = function (li) {
@@ -115,7 +97,6 @@ const RemoveItem = function (li) {
   }
 
   console.log("ID of deleted li:", li.id, "\nIndex of deleted li:", i, "\nITEMS:", itemsData, "\nl.children.length:", l.children.length); //
-  // btnMagic(); // essa merda tá dando bug... ver qual é desse bagui, se vale a pena deixá-lo desativado mesmo (o que soluciona os bugs) ou não. fora isso tudo sob o controle com essa função 👍
 };
 
 const closeModal = function () {
@@ -207,21 +188,16 @@ const addItem = function () {
       
       //
       if (p === "") {
-        // alertMsgClasses.remove("hidden"); // show alert if product field is empty
         alertMsg.innerHTML =
           "<p>Por favor, insira seu produto no espaço apropriado acima.</p><br>";
       } else {
         alertMsg.innerHTML = "";
-        // while (items.includes(p)) {
-        //   p += "_";
-        // }
-        // items.push(p); // items++
         if (listContainer.classList.contains("hidden"))
           listContainer.classList.remove("hidden");
   
         // build up list
         li.append(product, btnMoveItemUp, btnMoveItemDown, btnRemoveItem); // append elements to list item
-        if (existingList === null) {
+        if (!existingList) {
           newList.id = "shoplist";
           newList.append(li);
           listContainer.append(newList); // append newly created list to container
@@ -278,19 +254,6 @@ btnUl.addEventListener("click", () => {
 });
 
 btnOl.addEventListener("click", () => {
-  // const existingList = document.querySelector("#shoplist");
-
-  // if (existingList && existingList.tagName.toLowerCase() === "ul") {
-  //   const ol = document.createElement("ol"); // CONVERTER P FUNÇÃO
-  //   ol.id = existingList.id;
-  //   itemsData.forEach(item => ol.append(item.HTMLElements.li));
-  //   listContainer.replaceChildren(ol);
-    
-  //   ol.id = existingList.id;
-  //   ol.innerHTML = existingList.innerHTML;
-  //   existingList.parentElement.replaceChildren(ol);
-  //   btnMagic();
-  // }
   reformatList("ol");
   if (!btnOl.classList.contains("format-btn-selected")) {
     btnOl.classList.add("format-btn-selected");
@@ -320,10 +283,13 @@ const showInfo = function () {
 // console.log(getComputedStyle(document.querySelector(".popout")).animationDuration);
 
 /*
-BUGS/ERRORS:
 
-- the (lazy) way to get something similar to the "p" local variable from the addItem function in the removeItem function doesn't quite cut it. Look for a way to do it better.
-- "items" array gets messed up with items getting moved up and down or getting deleted. This is a problem because sometimes the elements in the array end up unbound to the items in the list, which gives room to issues like the ability to add a duplicate item in the list without triggering the warning modal for that.
+TODO:
 
-SUGGESTION: maybe reformulate the "items" array functionality altogether.
+- Go over the entire code: see what can be tidied up, what can be removed, what can be improved etc;
+- Implement falling item animation, to be played when a new item is added to the list;
+- See if it is possible to add more to the item quantity/amount feature (like having the option to combine list items that have the same name into a single item followed by the appropriate amount, for instance);
+- Add a modal/dialog for the user to confirm if he wishes to clear the entire list in case he clicks the designed button (and/or make the button stand out somehow to make it visually clearer for the user that it is a clear button (maybe by making it reddish));
+- Improve the fluff (animations, more styling etc).
+
 */
