@@ -1,28 +1,5 @@
-Criar função p/ "desenhar" os botões de acordo com o array ITEMS.
-	- consultar/ler o array e criar os botões conforme a disposição dos itens.
+TODO:
 
-4 circunstâncias em que o array ITEMS muda:
-
-1. btnAddItem
-2. btnMoveItemUp
-3. btnMoveItemDown
-4. btnRemoveItem
-
-Em cada uma dessas circunstâncias a função deve rodar.
-
---
-
-btnRemoveItem => só um item na lista
-
-[btnMoveItemDown, btnRemoveItem] => primeiro item de uma lista com 2 ou mais itens
-
-[btnMoveItemUp, btnRemoveItem] => último item de uma lista com 2 ou mais itens
-
-[btnMoveItemUp, btnMoveItemDown, btnRemoveItem] => item no meio de uma lista de 3 ou mais itens
-
-{
-a: [btnRemoveItem],
-b: [btnMoveItemDown, btnRemoveItem],
-c: [btnMoveItemUp, btnRemoveItem],
-d: [btnMoveItemUp, btnMoveItemDown, btnRemoveItem]
-}
+- Implement falling item animation, to be played when a new item is added to the list;
+- See if it is possible to add more to the item quantity/amount feature (like having the option to combine list items that have the same name into a single item followed by the appropriate amount, for instance);
+- Improve the fluff (animations, more styling etc).
