@@ -1,6 +1,5 @@
 "use strict";
 
-let lang = "en";
 const txt = {
     lang: {
         en: "en-US",
@@ -54,13 +53,13 @@ const txt = {
         en: "No",
         pt: "Não"
     },
-    btnMoveItemUpTitle: {
-        en: "Move item up",
-        pt: "Mover item para cima"
-    },
     btnMoveItemDownTitle: {
         en: "Move item down",
         pt: "Mover item para baixo"
+    },
+    btnMoveItemUpTitle: {
+        en: "Move item up",
+        pt: "Mover item para cima"
     },
     btnRemoveItemTitle: {
         en: "Remove item",

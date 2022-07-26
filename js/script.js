@@ -1,9 +1,13 @@
 "use strict";
-// import txt from langdef.js;
 
 /////////////////////////////////////////////////
 // VARIABLES
 /////////////////////////////////////////////////
+
+// language dependent variables
+let lang; /*  = "en"; */
+let alertMsgInnerText; /* = txt.alertMsg.pt; */
+let modalMsgInnerText; /* = txt.modalMsg.pt; */
 
 // input field elements
 const productField = document.querySelector("#product-field");
@@ -22,9 +26,8 @@ const btnUl = document.querySelector("#unordered-list");
 const btnOl = document.querySelector("#ordered-list");
 const btnYes = document.querySelector("#yes");
 const btnNo = document.querySelector("#no");
-
-// messages
-const modalMsgClearList = "Sua lista será completamente esvaziada. Deseja continuar?";
+const btnLangEN = document.querySelector("#lang-en");
+const btnLangPT = document.querySelector("#lang-pt");
 
 // lets
 let itemsData = [];
@@ -35,8 +38,99 @@ let allowDuplicate = false;
 // FUNCTIONS
 /////////////////////////////////////////////////
 
+const setUpLanguage = function (lang_) {
+  const redefineAlertMessages = function (lang__) {
+    try {
+      if (lang__ !== "en" && lang__ !== "pt") throw new Error("Argument 'lang__' must be set to either 'en' (for English) or 'pt' (for Portuguese).")
+
+      const arr = lang__ === "en" ? txt.alertMsg.pt : txt.alertMsg.en;
+      
+      if (alertMsg.textContent) {
+        if (alertMsg.textContent === arr[0]) alertMsg.innerHTML = `<p>${alertMsgInnerText[0]}</p><br>`;
+        if (alertMsg.textContent === arr[1]) alertMsg.innerHTML = `<p>${alertMsgInnerText[1]}</p><br>`;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  
+  lang = lang_;
+
+  switch (lang) {
+    case "en":
+      alertMsgInnerText = txt.alertMsg.en;
+      modalMsgInnerText = txt.modalMsg.en;
+
+      document.querySelector("html").lang = txt.lang.en;
+      document.querySelector("title").innerText = txt.pageTitle.en;
+      document.querySelector("h1").innerText = txt.pageTitle.en;
+      productField.placeholder = txt.productFieldPlaceholder.en;
+      amountField.placeholder = txt.amountFieldPlaceholder.en;
+      productField.title = txt.productFieldTitle.en;
+      amountField.title = txt.amountFieldTitle.en;
+      document.querySelector(".formatting").querySelector("strong").innerText =
+        txt.formattingInnerText.en;
+      btnUl.title = txt.formatBtnUnorderedListTitle.en;
+      btnOl.title = txt.formatBtnOrderedListTitle.en;
+      btnAddItem.innerText = txt.btnAddItemInnerText.en;
+      btnClearList.innerText = txt.btnClearListInnerText.en;
+      btnYes.innerText = txt.btnYesInnerText.en;
+      btnNo.innerText = txt.btnNoInnerText.en;
+      modal.querySelector("p").innerText = txt.modalMsg.en[0];
+      document.querySelectorAll(".move-item").forEach((btn, i) => {
+        if (!(i % 2)) {
+          btn.title = txt.btnMoveItemUpTitle.en;
+        } else btn.title = txt.btnMoveItemDownTitle.en;
+      });
+      document
+        .querySelectorAll(".remove-item")
+        .forEach((btn) => (btn.title = txt.btnRemoveItemTitle.en));
+
+      redefineAlertMessages("en");
+
+      btnLangEN.style.opacity = 1;
+      btnLangPT.removeAttribute("style");
+
+      break;
+    case "pt":
+    default:
+      alertMsgInnerText = txt.alertMsg.pt;
+      modalMsgInnerText = txt.modalMsg.pt;
+
+      document.querySelector("html").lang = txt.lang.pt;
+      document.querySelector("title").innerText = txt.pageTitle.pt;
+      document.querySelector("h1").innerText = txt.pageTitle.pt;
+      productField.placeholder = txt.productFieldPlaceholder.pt;
+      amountField.placeholder = txt.amountFieldPlaceholder.pt;
+      productField.title = txt.productFieldTitle.pt;
+      amountField.title = txt.amountFieldTitle.pt;
+      document.querySelector(".formatting").querySelector("strong").innerText =
+        txt.formattingInnerText.pt;
+      btnUl.title = txt.formatBtnUnorderedListTitle.pt;
+      btnOl.title = txt.formatBtnOrderedListTitle.pt;
+      btnAddItem.innerText = txt.btnAddItemInnerText.pt;
+      btnClearList.innerText = txt.btnClearListInnerText.pt;
+      btnYes.innerText = txt.btnYesInnerText.pt;
+      btnNo.innerText = txt.btnNoInnerText.pt;
+      modal.querySelector("p").innerText = txt.modalMsg.pt[0];
+      document.querySelectorAll(".move-item").forEach((btn, i) => {
+        if (!(i % 2)) {
+          btn.title = txt.btnMoveItemUpTitle.pt;
+        } else btn.title = txt.btnMoveItemDownTitle.pt;
+      });
+      document
+        .querySelectorAll(".remove-item")
+        .forEach((btn) => (btn.title = txt.btnRemoveItemTitle.pt));
+
+      redefineAlertMessages("pt");
+      
+      btnLangPT.style.opacity = 1;
+      btnLangEN.removeAttribute("style");
+  }
+};
+
 const openModal = function (
-  modalMsg = "Já existe um produto com esse nome na lista. Inserir mesmo assim?"
+  modalMsg = lang === "en" ? txt.modalMsg.en[0] : txt.modalMsg.pt[0] // m
 ) {
   modal.querySelector("p").innerText = modalMsg;
   if (modal.classList.contains("hidden")) {
@@ -166,8 +260,7 @@ const addItem = function () {
   const p = productField.value;
 
   if (p === "") {
-    alertMsg.innerHTML =
-      "<p>Por favor, insira seu produto no espaço apropriado acima.</p><br>";
+    alertMsg.innerHTML = `<p>${alertMsgInnerText[0]}</p><br>`;
   } else {
     if (alertMsg.innerHTML) alertMsg.innerHTML = "";
     if (listContainer.classList.contains("hidden"))
@@ -198,20 +291,25 @@ const addItem = function () {
         itemID: li.id,
         itemName: p,
         itemAmount: amount,
-        li: li
+        li: li,
       });
 
       // button setup
       btnMoveItemUp.innerHTML = "&#8679";
-      btnMoveItemUp.title = "Mover item para cima";
+      btnMoveItemUp.title =
+        lang === "en" ? txt.btnMoveItemUpTitle.en : txt.btnMoveItemUpTitle.pt;
       btnMoveItemUp.classList.add("li-btn", "move-item", "visibility-hidden");
 
       btnMoveItemDown.innerHTML = "&#8681";
-      btnMoveItemDown.title = "Mover item para baixo";
+      btnMoveItemDown.title =
+        lang === "en"
+          ? txt.btnMoveItemDownTitle.en
+          : txt.btnMoveItemDownTitle.pt;
       btnMoveItemDown.classList.add("li-btn", "move-item", "visibility-hidden");
 
       btnRemoveItem.innerHTML = "&times;";
-      btnRemoveItem.title = "Remover item";
+      btnRemoveItem.title =
+        lang === "en" ? txt.btnRemoveItemTitle.en : txt.btnRemoveItemTitle.pt;
       btnRemoveItem.classList.add("li-btn", "remove-item", "visibility-hidden");
 
       // create new list/append new item
@@ -266,8 +364,8 @@ btnAddItem.addEventListener("click", addItem);
 
 btnClearList.addEventListener("click", () => {
   if (listContainer.children.length === 0) {
-    alertMsg.innerHTML = "<p>Não há itens para remover!</p><br>";
-  } else openModal(modalMsgClearList);
+    alertMsg.innerHTML = `<p>${alertMsgInnerText[1]}</p><br>`;
+  } else openModal(modalMsgInnerText[1]);
 });
 
 btnUl.addEventListener("click", () => {
@@ -290,7 +388,7 @@ btnOl.addEventListener("click", () => {
 
 btnYes.addEventListener("click", () => {
   closeModal();
-  if (modal.querySelector("p").innerText === modalMsgClearList) {
+  if (modal.querySelector("p").innerText === modalMsgInnerText[1]) {
     // clear list
     listContainer.innerHTML = "";
     itemsData = [];
@@ -306,3 +404,11 @@ btnYes.addEventListener("click", () => {
 });
 
 btnNo.addEventListener("click", closeModal);
+
+btnLangEN.addEventListener("click", () => setUpLanguage("en"));
+
+btnLangPT.addEventListener("click", () => setUpLanguage("pt"));
+
+/////////////////////////////////////////////////
+
+setUpLanguage("pt");
