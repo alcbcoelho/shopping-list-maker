@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////
-// VARIABLES AND MIXINS
+// DEFINITIONS
 /////////////////////////////////////////////////
 
 $primary-light-color: #ececec;
@@ -8,14 +8,13 @@ $secondary-light-color: #fff;
 $secondary-dark-color: #808080;
 $alert-color: #e42222;
 
-$font-text: "Roboto", sans-serif;
-$font-display: "Londrina Shadow", sans-serif;   // cursive
+$font-text: "Roboto", Helvetica, sans-serif;
+$font-display: "Londrina Shadow", Tahoma, sans-serif;
 $font-sizes: ("micro": 0.6em, "small": 0.8em, "normal": 1em, "medium-large": 1.25em, "large": 2.75em);
 
-@mixin square-button-template {
-  height: 1.5em;
-  width: 1.5em;
-  margin-left: 0.25em;
+@mixin square-button-template($dimension) {
+  height: $dimension;// 1.5em;
+  width: $dimension;// 1.5em;
 }
 
 /////////////////////////////////////////////////
@@ -23,6 +22,11 @@ $font-sizes: ("micro": 0.6em, "small": 0.8em, "normal": 1em, "medium-large": 1.2
 /////////////////////////////////////////////////
 
 @import url("https://fonts.googleapis.com/css2?family=Londrina+Shadow&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+
+@font-face {
+  font-family: "Londrina Shadow";
+  src: url("../src/LondrinaShadow-Regular.ttf");
+}
 
 /////////////////////////////////////////////////
 // ANIMATION KEYFRAMES
@@ -54,13 +58,22 @@ body {
   background-color: $primary-light-color;
 }
 
+footer {
+  padding: 15px;
+  color: $primary-light-color;
+  background-color: $primary-dark-color;
+  text-align: center;
+  font-size: map-get($font-sizes, "micro");
+}
+
 h1 {
   font: {
     family: $font-display;
     size: map-get($font-sizes, "large");
   }
-  color: $primary-dark-color;
+  
   letter-spacing: 2px;
+  color: $primary-dark-color;
   margin-bottom: 0.5em;
 }
 
@@ -69,16 +82,21 @@ ol {
   padding-left: 30px;
 }
 
-.main {
-  padding: 1em 0;
-  min-height: calc(100vh - 6.85em);  // calc(100vh - 4.575em)
-  background: url("../img/shopping-cart.png") bottom right no-repeat;
+.alert {
+  font-size: map-get($font-sizes, "small");
+  color: $alert-color;
+}
+
+.formatting {
+  border: 1px $secondary-dark-color dotted;
+  border-radius: 20px;
+  width: 200px;
+  margin: auto;
+  padding: 10px;
 }
 
 .list {
-  // background-color: $secondary-light-color;
   border-radius: 5px;
-  // box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   width: 70%;
   padding: 10px;
   margin: 1em auto 0 auto;
@@ -87,6 +105,12 @@ ol {
   background: url("../img/stripe.png");   // #80808010
   animation: listpopup 0.7s normal;
   animation-timing-function: ease-out;
+}
+
+.main {
+  padding: 1em 0;
+  min-height: calc(100vh - 6.85em);  // calc(100vh - 4.575em)
+  background: url("../img/shopping-cart.png") bottom right no-repeat;
 }
 
 .modal {
@@ -115,20 +139,21 @@ ol {
   z-index: 5;
 }
 
+/* input-related styling */
+
 input[type="text"],
 input[type="number"],
 select {
   padding: 5px;
   border: 1px $primary-dark-color solid;
   background-color: $primary-light-color;
-  /* width: 250px; */
 }
 
 input[type="number"] {
   width: 50px;
 }
 
-/* button-related stuff */
+/* button-related styling */
 
 button {
   cursor: pointer;
@@ -150,13 +175,11 @@ button {
 }
 
 .lang-btn {
-  // @include square-button-template;
-  height: 2.25em;
-  width: 2.25em;
+  @include square-button-template(2.25em);
   margin: {
     left: 0.25em;
     bottom: 0.5em;
-  } // see if i can turn this into a function and use it for .li-btn as well instead of the mixin
+  } 
 
   padding: 0;
   border: 0;
@@ -175,13 +198,15 @@ button {
 
 .li-btn,
 .format-btn {
-  @include square-button-template;
+  @include square-button-template(1.5em);
   border: {
     width: 2px;
     color: $primary-dark-color;
     style: solid;
     radius: 7px;
   }
+
+  margin-left: 0.25em;
   background: none;
   color: $primary-dark-color;
   display: inline-block;
@@ -218,37 +243,16 @@ button {
   background-color: $alert-color
 }
 
-.alert {
-  font-size: map-get($font-sizes, "small");
-  color: $alert-color;
-}
-
-.formatting {
-  border: 1px $secondary-dark-color dotted;
-  border-radius: 20px;
-  width: 200px;
-  margin: auto;
-  padding: 10px;
-}
-
-footer {
-  padding: 15px;
-  color: $primary-light-color;
-  background-color: $primary-dark-color;
-  text-align: center;
-  font-size: map-get($font-sizes, "micro");
-}
-
-/* Other */
+/* other */
 
 .hidden {
   display: none;
 }
 
-.visibility-hidden {
-  visibility: hidden;
-}
-
 .txt-align-center {
   text-align: center;
+}
+
+.visibility-hidden {
+  visibility: hidden;
 }

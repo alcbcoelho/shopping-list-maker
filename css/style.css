@@ -1,4 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Londrina+Shadow&family=Roboto:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+@font-face {
+  font-family: "Londrina Shadow";
+  src: url("../src/LondrinaShadow-Regular.ttf");
+}
 @-webkit-keyframes listpopup {
   from {
     transform: scale(0.75, 0.75);
@@ -21,7 +25,7 @@
 }
 * {
   margin: 0px;
-  font-family: "Roboto", sans-serif;
+  font-family: "Roboto", Helvetica, sans-serif;
 }
 
 body {
@@ -30,11 +34,19 @@ body {
   background-color: #ececec;
 }
 
+footer {
+  padding: 15px;
+  color: #ececec;
+  background-color: #424242;
+  text-align: center;
+  font-size: 0.6em;
+}
+
 h1 {
-  font-family: "Londrina Shadow", sans-serif;
+  font-family: "Londrina Shadow", Tahoma, sans-serif;
   font-size: 2.75em;
-  color: #424242;
   letter-spacing: 2px;
+  color: #424242;
   margin-bottom: 0.5em;
 }
 
@@ -43,10 +55,17 @@ ol {
   padding-left: 30px;
 }
 
-.main {
-  padding: 1em 0;
-  min-height: calc(100vh - 6.85em);
-  background: url("../img/shopping-cart.png") bottom right no-repeat;
+.alert {
+  font-size: 0.8em;
+  color: #e42222;
+}
+
+.formatting {
+  border: 1px #808080 dotted;
+  border-radius: 20px;
+  width: 200px;
+  margin: auto;
+  padding: 10px;
 }
 
 .list {
@@ -61,6 +80,12 @@ ol {
           animation: listpopup 0.7s normal;
   -webkit-animation-timing-function: ease-out;
           animation-timing-function: ease-out;
+}
+
+.main {
+  padding: 1em 0;
+  min-height: calc(100vh - 6.85em);
+  background: url("../img/shopping-cart.png") bottom right no-repeat;
 }
 
 .modal {
@@ -90,20 +115,20 @@ ol {
   z-index: 5;
 }
 
+/* input-related styling */
 input[type=text],
 input[type=number],
 select {
   padding: 5px;
   border: 1px #424242 solid;
   background-color: #ececec;
-  /* width: 250px; */
 }
 
 input[type=number] {
   width: 50px;
 }
 
-/* button-related stuff */
+/* button-related styling */
 button {
   cursor: pointer;
 }
@@ -144,11 +169,11 @@ button {
 .format-btn {
   height: 1.5em;
   width: 1.5em;
-  margin-left: 0.25em;
   border-width: 2px;
   border-color: #424242;
   border-style: solid;
   border-radius: 7px;
+  margin-left: 0.25em;
   background: none;
   color: #424242;
   display: inline-block;
@@ -185,36 +210,15 @@ button {
   background-color: #e42222;
 }
 
-.alert {
-  font-size: 0.8em;
-  color: #e42222;
-}
-
-.formatting {
-  border: 1px #808080 dotted;
-  border-radius: 20px;
-  width: 200px;
-  margin: auto;
-  padding: 10px;
-}
-
-footer {
-  padding: 15px;
-  color: #ececec;
-  background-color: #424242;
-  text-align: center;
-  font-size: 0.6em;
-}
-
-/* Other */
+/* other */
 .hidden {
   display: none;
 }
 
-.visibility-hidden {
-  visibility: hidden;
-}
-
 .txt-align-center {
   text-align: center;
+}
+
+.visibility-hidden {
+  visibility: hidden;
 }/*# sourceMappingURL=style.css.map */

@@ -5,9 +5,9 @@
 /////////////////////////////////////////////////
 
 // language dependent variables
-let lang; /*  = "en"; */
-let alertMsgInnerText; /* = txt.alertMsg.pt; */
-let modalMsgInnerText; /* = txt.modalMsg.pt; */
+let lang;
+let alertMsgInnerText;
+let modalMsgInnerText;
 
 // input field elements
 const productField = document.querySelector("#product-field");
@@ -41,19 +41,24 @@ let allowDuplicate = false;
 const setUpLanguage = function (lang_) {
   const redefineAlertMessages = function (lang__) {
     try {
-      if (lang__ !== "en" && lang__ !== "pt") throw new Error("Argument 'lang__' must be set to either 'en' (for English) or 'pt' (for Portuguese).")
+      if (lang__ !== "en" && lang__ !== "pt")
+        throw new Error(
+          "Argument 'lang__' must be set to either 'en' (for English) or 'pt' (for Portuguese)."
+        );
 
       const arr = lang__ === "en" ? txt.alertMsg.pt : txt.alertMsg.en;
-      
+
       if (alertMsg.textContent) {
-        if (alertMsg.textContent === arr[0]) alertMsg.innerHTML = `<p>${alertMsgInnerText[0]}</p><br>`;
-        if (alertMsg.textContent === arr[1]) alertMsg.innerHTML = `<p>${alertMsgInnerText[1]}</p><br>`;
+        if (alertMsg.textContent === arr[0])
+          alertMsg.innerHTML = `<p>${alertMsgInnerText[0]}</p><br>`;
+        if (alertMsg.textContent === arr[1])
+          alertMsg.innerHTML = `<p>${alertMsgInnerText[1]}</p><br>`;
       }
     } catch (e) {
       console.error(e);
     }
-  }
-  
+  };
+
   lang = lang_;
 
   switch (lang) {
@@ -84,7 +89,7 @@ const setUpLanguage = function (lang_) {
       });
       document
         .querySelectorAll(".remove-item")
-        .forEach((btn) => (btn.title = txt.btnRemoveItemTitle.en));
+        .forEach(btn => (btn.title = txt.btnRemoveItemTitle.en));
 
       redefineAlertMessages("en");
 
@@ -120,17 +125,17 @@ const setUpLanguage = function (lang_) {
       });
       document
         .querySelectorAll(".remove-item")
-        .forEach((btn) => (btn.title = txt.btnRemoveItemTitle.pt));
+        .forEach(btn => (btn.title = txt.btnRemoveItemTitle.pt));
 
       redefineAlertMessages("pt");
-      
+
       btnLangPT.style.opacity = 1;
       btnLangEN.removeAttribute("style");
   }
 };
 
 const openModal = function (
-  modalMsg = lang === "en" ? txt.modalMsg.en[0] : txt.modalMsg.pt[0] // m
+  modalMsg = lang === "en" ? txt.modalMsg.en[0] : txt.modalMsg.pt[0]
 ) {
   modal.querySelector("p").innerText = modalMsg;
   if (modal.classList.contains("hidden")) {
@@ -162,7 +167,7 @@ const reformatList = function (type) {
     if (existingList && existingList.tagName.toLowerCase() === reverseType) {
       const newListType = document.createElement(type);
       newListType.id = existingList.id;
-      itemsData.forEach((item) => newListType.append(item.li));
+      itemsData.forEach(item => newListType.append(item.li));
       listContainer.replaceChildren(newListType);
     }
   } catch (e) {
@@ -176,7 +181,7 @@ const addItem = function () {
   ///////////////////////////////////////////////
 
   const moveItemUp = function (li) {
-    const i = itemsData.findIndex((item) => item.itemID === li.id);
+    const i = itemsData.findIndex(item => item.itemID === li.id);
     const existingList = document.querySelector("#shoplist");
 
     if (i !== 0) {
@@ -186,7 +191,7 @@ const addItem = function () {
     }
 
     existingList.innerHTML = "";
-    itemsData.forEach((item) => existingList.append(item.li));
+    itemsData.forEach(item => existingList.append(item.li));
 
     console.log(
       "ID of li to move up:",
@@ -199,7 +204,7 @@ const addItem = function () {
   };
 
   const moveItemDown = function (li) {
-    const i = itemsData.findIndex((item) => item.itemID === li.id);
+    const i = itemsData.findIndex(item => item.itemID === li.id);
     const existingList = document.querySelector("#shoplist");
 
     if (i !== itemsData.length - 1) {
@@ -209,7 +214,7 @@ const addItem = function () {
     }
 
     existingList.innerHTML = "";
-    itemsData.forEach((item) => existingList.append(item.li));
+    itemsData.forEach(item => existingList.append(item.li));
 
     console.log(
       "ID of li to move down:",
@@ -222,7 +227,7 @@ const addItem = function () {
   };
 
   const removeItem = function (li) {
-    const i = itemsData.findIndex((item) => item.itemID === li.id);
+    const i = itemsData.findIndex(item => item.itemID === li.id);
     const l = document.querySelector("#shoplist");
 
     itemsData.splice(i, 1);
@@ -248,10 +253,10 @@ const addItem = function () {
   const toggleElementsVisibility = function (arr, onoff) {
     switch (onoff) {
       case 0:
-        arr.forEach((element) => element.classList.add("visibility-hidden"));
+        arr.forEach(element => element.classList.add("visibility-hidden"));
         break;
       case 1:
-        arr.forEach((element) => element.classList.remove("visibility-hidden"));
+        arr.forEach(element => element.classList.remove("visibility-hidden"));
     }
   };
 
@@ -266,7 +271,7 @@ const addItem = function () {
     if (listContainer.classList.contains("hidden"))
       listContainer.classList.remove("hidden");
 
-    if (itemsData.some((item) => item.itemName === p) && !allowDuplicate) {
+    if (itemsData.some(item => item.itemName === p) && !allowDuplicate) {
       openModal();
     } else {
       const listFormat = btnUl.classList.contains("format-btn-selected")
