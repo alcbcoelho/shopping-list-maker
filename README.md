@@ -8,6 +8,6 @@ A personal project extended from a programming logic school assignment. Its prem
 # Criador de Lista de Compras
 Um projeto pessoal que se estendeu de um trabalho universitário de lógica de programação. A sua premissa é auto-explicativa: através da obtenção de inputs do usuário, é gerada uma lista de compras que pode ser reordenada, reformatada e modificada a qualquer momento.
 
-* Programado totalmente em JavaScript puro.
+* Programado em JavaScript puro.
 * Itens podem ser ordenados tanto numericamente quanto por marcadores.
 * O idioma do programa pode ser alternado entre inglês e português em qualquer momento.
