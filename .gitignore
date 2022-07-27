@@ -1,5 +1,4 @@
-.vscode
-backup
+.vscode/
+backup/
 img/ignore-me/
 coisas.txt
-text-elements.txt
