@@ -1,5 +1,0 @@
-TODO:
-
-- Implement falling item animation, to be played when a new item is added to the list;
-- See if it is possible to add more to the item quantity/amount feature (like having the option to combine list items that have the same name into a single item followed by the appropriate amount, for instance);
-- Improve the fluff (animations, more styling etc).
